@@ -23,7 +23,8 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    private String fullName;
+    @Column(name = "user_name", nullable = false)
+    private String userName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)

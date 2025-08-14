@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getFullName(),
+                user.getUserName(),
                 toRoleEntity(user.getRole())
 
         );
@@ -47,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
                 saved.getId(),
                 saved.getEmail(),
                 saved.getPassword(),
-                saved.getFullName(),
+                saved.getUserName(),
                 toDomainRole(saved.getRole())
         );
     }
@@ -60,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
                         entity.getId(),
                         entity.getEmail(),
                         entity.getPassword(),
-                        entity.getFullName(),
+                        entity.getUserName(),
                         toDomainRole(entity.getRole())
                 ));
     }

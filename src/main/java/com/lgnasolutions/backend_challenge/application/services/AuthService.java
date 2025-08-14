@@ -22,15 +22,15 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
     public AuthResponseDTO login(AuthRequestDTO request) {
-        User user = userRepository.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new CustomException("User not found"));
-        System.out.println(request.getEmail() +" -" + request.getPassword());
-        System.out.println(user.getPassword());
-        if ( !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        User user = userRepository.findUserByEmail(request.getEmail()).orElseThrow(
+                () -> new CustomException("Invalid credentials")
+        );
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException("Invalid credentials");
         }
         String token = jwtProvider.generateToken(user.getId());
-            return AuthResponseDTO.builder().token(token).build();
+        return AuthResponseDTO.builder().token(token).build();
     }
 
     public AuthResponseDTO register(UserDTO dto){
