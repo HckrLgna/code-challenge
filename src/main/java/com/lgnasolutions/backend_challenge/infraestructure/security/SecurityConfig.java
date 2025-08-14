@@ -1,5 +1,6 @@
 package com.lgnasolutions.backend_challenge.infraestructure.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -11,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -23,10 +26,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("HttpMethod.POST", "/api/auth/login").permitAll()
                         .requestMatchers("HttpMethod.POST", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/notes/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html","/swagger-ui/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable());
         return http.build();
     }
