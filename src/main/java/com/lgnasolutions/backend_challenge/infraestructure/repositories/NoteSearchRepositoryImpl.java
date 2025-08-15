@@ -23,7 +23,6 @@ public class NoteSearchRepositoryImpl implements NoteSearchRepository {
     @Override
     public List<Note> searchNotes(NoteSearchCriteriaDTO criteria) {
 
-        System.out.println("Searching notes with criteria: " + criteria.getUserId()+ criteria.getTagIds() + " " + criteria.getTitle() + " " + criteria.getContent());
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<NoteEntity> cq = cb.createQuery(NoteEntity.class);

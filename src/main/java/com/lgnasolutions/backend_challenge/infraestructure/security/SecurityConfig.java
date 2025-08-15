@@ -19,7 +19,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Basic security config: permit all for /auth endpoints, secure others
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

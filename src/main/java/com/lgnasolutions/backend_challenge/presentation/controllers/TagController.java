@@ -45,7 +45,6 @@ public class TagController {
         tagService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
-    //TODO: List notes
     @GetMapping("/{tagId}/notes")
     public ResponseEntity<List<UUID>> notesByTagId(@PathVariable UUID tagId, HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");

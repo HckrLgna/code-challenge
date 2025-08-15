@@ -62,11 +62,9 @@ public class NoteRepositoryImpl implements NoteRepository {
         if (isArchived != null && title != null) {
             return noteJpaRepository.findByUserIdAndArchivedAndTitleContainingIgnoreCase(userId, isArchived, title);
         }
-        System.out.println("Fetching notes 2 with userId: " + userId + ", isArchived: " + isArchived + ", title: " + title);
         if (isArchived != null) {
             return noteJpaRepository.findByUserIdAndArchived(userId, isArchived);
         }
-        System.out.println("Fetching notes 3 with userId: " + userId + ", isArchived: " + isArchived + ", title: " + title);
         if (title != null) {
             return noteJpaRepository.findByUserIdAndTitleContainingIgnoreCase(userId, title);
         }
