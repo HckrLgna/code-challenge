@@ -28,7 +28,6 @@ public class NoteEntity {
 
     @Column(name = "is_archived")
     private boolean archived=false;
-    //TODO: Fix version number
 
     @OneToMany
     @JoinColumn(name = "note_id", referencedColumnName = "id")

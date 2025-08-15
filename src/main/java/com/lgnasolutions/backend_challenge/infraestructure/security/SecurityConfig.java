@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/notes/**").permitAll()
                         .requestMatchers("/api/notes/{id}/edit").permitAll()
                         .requestMatchers("/api/note-versions/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html","/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/index.html","/swagger-ui/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )

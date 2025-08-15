@@ -20,10 +20,10 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String password;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "full_name")
     private String userName;
 
     @ManyToOne(fetch = FetchType.EAGER)

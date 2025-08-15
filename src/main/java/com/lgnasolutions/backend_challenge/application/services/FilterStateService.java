@@ -14,11 +14,17 @@ import java.util.UUID;
 public class FilterStateService {
     private final FilterStateRepository filterStateRepository;
     public FilterStateDTO saveState(UUID userId, FilterStateDTO filterStateDTO) {
-        System.out.println(filterStateDTO.getFilters());
+        System.out.println("DEBUG filters type: " + filterStateDTO.getFilters().getClass().getName());
+        if (!(filterStateDTO.getFilters() instanceof java.util.Map)) {
+            throw new IllegalArgumentException("filters must be a Map<String, Object>, not " + filterStateDTO.getFilters().getClass().getName());
+        }
+        // Depuración: imprime el contenido real del Map
+        System.out.println("DEBUG filters content: " + filterStateDTO.getFilters());
         FilterState state = FilterState.builder()
                 .userId(userId)
                 .filters(filterStateDTO.getFilters())
                 .build();
+        System.out.println( state.getFilters());
         FilterState saved = filterStateRepository.save(state);
         return FilterStateMapper.toDTO(saved);
     }

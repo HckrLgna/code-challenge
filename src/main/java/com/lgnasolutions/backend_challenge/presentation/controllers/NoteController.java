@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,8 +35,15 @@ public class NoteController {
         NoteDTO note = noteService.getById(id);
         return ResponseEntity.ok(note);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getAll")
+    public ResponseEntity<List<NoteDTO>> getAll() {
+        List<NoteDTO> notes = noteService.getAll();
+        return ResponseEntity.ok(notes);
+    }
+
     @GetMapping("/")
-    public ResponseEntity<List<NoteDTO>> getAll(
+    public ResponseEntity<List<NoteDTO>> getAllByUserId(
             @RequestParam(required = false) Boolean isArchived,
             @RequestParam(required = false) String title
     ) {
@@ -72,6 +80,8 @@ public class NoteController {
         NoteDTO unarchived = noteService.unarchive(id);
         return ResponseEntity.ok(unarchived);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/export")
     public ResponseEntity<List<NoteDTO>> exportNotes(HttpServletRequest request) {
 
@@ -81,6 +91,7 @@ public class NoteController {
                 .body(notes);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/import")
     public ResponseEntity<Void> importNotes(@RequestBody List<NoteDTO> notes, HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");

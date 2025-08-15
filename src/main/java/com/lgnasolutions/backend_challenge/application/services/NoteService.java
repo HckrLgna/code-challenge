@@ -41,7 +41,12 @@ public class NoteService {
                     throw new CustomException("Note not found with id: " + id);
                 });
     }
-
+    public List<NoteDTO> getAll() {
+        return noteRepository.findAll()
+                .stream()
+                .map(NoteMapper::toDTO)
+                .collect(Collectors.toList());
+    }
     public List<NoteDTO> getByCriteria(NoteSearchCriteriaDTO criteria){
         return noteRepository.findByCriteria(criteria)
                 .stream()
@@ -92,59 +97,62 @@ public class NoteService {
                 .collect(Collectors.toList());
         noteRepository.saveAll(notes);
     }
-    //TODO: Refactor this method
+
     public NoteDTO editNote(UUID noteId, NoteDTO dto) {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 
+        NoteVersion prevVersion = createPreviousVersion(note);
+        noteVersionRepository.save(prevVersion);
+
+        updateNoteContent(note, dto);
+
+        NoteVersion newState = createNewState(note, prevVersion.getVersionNumber() + 1);
+        note.setCurrentState(newState);
+
+        note.setVersions(noteVersionRepository.findByNoteId(note.getId()));
+
+        Note updated = noteRepository.update(note);
+        return NoteMapper.toDTO(updated);
+    }
+
+    private NoteVersion createPreviousVersion(Note note) {
         NoteState currentState = note.getCurrentState();
-        NoteVersion prevVersion;
-        int newVersionNumber;
         if (currentState == null) {
-            List<NoteVersion> existingVersions = noteVersionRepository.findByNoteId(note.getId());
-            int lastVersionNumber = existingVersions.stream()
-                .mapToInt(NoteVersion::getVersionNumber)
-                .max()
-                .orElse(0);
-            prevVersion = NoteVersion.builder()
+            int lastVersionNumber = noteVersionRepository.findByNoteId(note.getId()).stream()
+                    .mapToInt(NoteVersion::getVersionNumber)
+                    .max()
+                    .orElse(0);
+            return NoteVersion.builder()
                     .noteId(note.getId())
                     .title(note.getTitle())
                     .content(note.getContent())
                     .versionNumber(lastVersionNumber + 1)
-                    .createdAt(java.time.Instant.now())
+                    .createdAt(Instant.now())
                     .build();
-            newVersionNumber = prevVersion.getVersionNumber() + 1;
         } else {
-            prevVersion = NoteVersion.builder()
+            return NoteVersion.builder()
                     .noteId(note.getId())
                     .title(currentState.getTitle())
                     .content(currentState.getContent())
                     .versionNumber(currentState.getVersionNumber())
                     .createdAt(currentState.getCreatedAt())
                     .build();
-            newVersionNumber = prevVersion.getVersionNumber() + 1;
         }
-        noteVersionRepository.save(prevVersion);
+    }
 
-        // Actualiza el contenido y el título de la nota, asegurando que nunca sean null
+    private void updateNoteContent(Note note, NoteDTO dto) {
         note.setTitle(dto.getTitle() != null ? dto.getTitle() : note.getTitle());
         note.setContent(dto.getContent() != null ? dto.getContent() : note.getContent());
+    }
 
-        // Update note's current state
-        NoteVersion newState = NoteVersion.builder()
+    private NoteVersion createNewState(Note note, int versionNumber) {
+        return NoteVersion.builder()
                 .noteId(note.getId())
                 .title(note.getTitle())
                 .content(note.getContent())
-                .versionNumber(newVersionNumber)
-                .createdAt(java.time.Instant.now())
+                .versionNumber(versionNumber)
+                .createdAt(Instant.now())
                 .build();
-        note.setCurrentState(newState);
-
-        // Optionally update version history
-        List<NoteVersion> versions = noteVersionRepository.findByNoteId(note.getId());
-        note.setVersions(versions);
-
-        Note updated = noteRepository.update(note);
-        return NoteMapper.toDTO(updated);
     }
 }

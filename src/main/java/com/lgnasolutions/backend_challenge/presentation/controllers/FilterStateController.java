@@ -22,7 +22,6 @@ public class FilterStateController {
         UUID userId = (UUID) request.getAttribute("userId");
         FilterStateDTO savedDto = filterStateService.saveState(userId, dto);
         return ResponseEntity.ok(savedDto);
-        //TODO: Check error
     }
     @GetMapping("/")
     public ResponseEntity<List<FilterStateDTO>> getAll(HttpServletRequest request) {

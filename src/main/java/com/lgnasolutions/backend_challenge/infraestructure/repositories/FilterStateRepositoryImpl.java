@@ -22,7 +22,9 @@ public class FilterStateRepositoryImpl implements FilterStateRepository {
     @Override
     public FilterState save(FilterState state) {
         FilterStateEntity entity = FilterStateMapper.toEntity(state);
+        System.out.println("filter state repos"+state.getFilters());
         FilterStateEntity savedEntity = filterStateJpaRepository.save(entity);
+        System.out.println("filter state repos saved"+savedEntity.getFilters());
         return FilterStateMapper.toDomain(savedEntity);
     }
 
