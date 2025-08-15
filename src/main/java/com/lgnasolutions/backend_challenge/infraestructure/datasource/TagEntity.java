@@ -6,29 +6,24 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "notes")
+@Table(name = "tags", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"}))
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NoteEntity {
+public class TagEntity {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(name="user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column
-    private String content;
-
-    @Column(name = "is_archived")
-    private boolean archived=false;
-    //TODO: Fix version number
-
+    private String color;
 
 }

@@ -16,7 +16,7 @@ public class NoteDTO {
 
     private UUID userId;
     @NotBlank
-    @Size(min = 8, max = 50)
+    @Size(min = 3, max = 50)
     private String title;
     private String content;
     private boolean isArchived;

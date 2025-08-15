@@ -10,10 +10,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteSearchCriteriaDTO {
-    private UUID userId;
-    private String title;
-    private String content;
-    private List<UUID> tagIds;
-    private Boolean isArchived;
+public class TagReassignDTO {
+    private List<UUID> noteIds;
+    private UUID newTagId;
 }

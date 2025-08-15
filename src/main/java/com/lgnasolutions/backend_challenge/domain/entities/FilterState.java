@@ -2,7 +2,7 @@ package com.lgnasolutions.backend_challenge.domain.entities;
 
 import lombok.*;
 
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -10,14 +10,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Note {
+public class FilterState {
     private UUID id;
     private UUID userId;
-    private String title;
-    private String content;
-    private boolean archived;
-
-    private NoteState currentState;
-    private List<NoteVersion> versions;
+    private Map<String, Object> filters;
 
 }

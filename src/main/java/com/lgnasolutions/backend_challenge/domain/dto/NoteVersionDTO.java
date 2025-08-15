@@ -1,8 +1,7 @@
 package com.lgnasolutions.backend_challenge.domain.dto;
 
 import lombok.*;
-
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -10,10 +9,11 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteSearchCriteriaDTO {
-    private UUID userId;
+public class NoteVersionDTO {
+    private UUID id;
+    private UUID noteId;
     private String title;
     private String content;
-    private List<UUID> tagIds;
-    private Boolean isArchived;
+    private int versionNumber;
+    private Instant createdAt;
 }

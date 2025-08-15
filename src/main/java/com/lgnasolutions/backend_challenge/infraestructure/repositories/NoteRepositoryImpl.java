@@ -24,6 +24,14 @@ public class NoteRepositoryImpl implements NoteRepository {
 
 
     @Override
+    public List<Note> findAll() {
+        return noteJpaRepository.findAll()
+                .stream()
+                .map(NoteMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Note create(Note note) {
         NoteEntity entity = NoteMapper.toEntity(note);
         NoteEntity savedEntity = noteJpaRepository.save(entity);
@@ -49,7 +57,7 @@ public class NoteRepositoryImpl implements NoteRepository {
         UUID userId = criteria.getUserId();
         Boolean isArchived = criteria.getIsArchived();
         String title = criteria.getTitle();
-        System.out.println("Fetching notes with criteria: " + criteria.toString());
+
 
         if (isArchived != null && title != null) {
             return noteJpaRepository.findByUserIdAndArchivedAndTitleContainingIgnoreCase(userId, isArchived, title);
@@ -74,5 +82,13 @@ public class NoteRepositoryImpl implements NoteRepository {
     @Override
     public void delete(UUID id) {
         noteJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public void saveAll(List<Note> notes) {
+        List<NoteEntity> entities = notes.stream()
+                .map(NoteMapper::toEntity)
+                .collect(Collectors.toList());
+        noteJpaRepository.saveAll(entities);
     }
 }

@@ -6,6 +6,7 @@ import com.lgnasolutions.backend_challenge.domain.dto.NoteSearchCriteriaDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -27,6 +28,11 @@ public class NoteController {
 
         NoteDTO created = noteService.create(noteDTO);
         return ResponseEntity.ok(created);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<NoteDTO> getById(@PathVariable UUID id) {
+        NoteDTO note = noteService.getById(id);
+        return ResponseEntity.ok(note);
     }
     @GetMapping("/")
     public ResponseEntity<List<NoteDTO>> getAll(
@@ -55,5 +61,35 @@ public class NoteController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         noteService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/{id}/archive")
+    public ResponseEntity<NoteDTO> archive(@PathVariable UUID id) {
+        NoteDTO archived = noteService.archive(id);
+        return ResponseEntity.ok(archived);
+    }
+    @PostMapping("/{id}/unarchive")
+    public ResponseEntity<NoteDTO> unarchive(@PathVariable UUID id) {
+        NoteDTO unarchived = noteService.unarchive(id);
+        return ResponseEntity.ok(unarchived);
+    }
+    @GetMapping("/export")
+    public ResponseEntity<List<NoteDTO>> exportNotes(HttpServletRequest request) {
+
+        List<NoteDTO> notes = noteService.exportNotes();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(notes);
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<Void> importNotes(@RequestBody List<NoteDTO> notes, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+        noteService.importNotes(userId, notes);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/{id}/edit")
+    public ResponseEntity<NoteDTO> editNote(@PathVariable UUID id, @RequestBody NoteDTO dto) {
+        NoteDTO updated = noteService.editNote(id, dto);
+        return ResponseEntity.ok(updated);
     }
 }

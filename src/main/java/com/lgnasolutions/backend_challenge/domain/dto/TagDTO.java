@@ -2,7 +2,6 @@ package com.lgnasolutions.backend_challenge.domain.dto;
 
 import lombok.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -10,10 +9,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteSearchCriteriaDTO {
+public class TagDTO {
+    private UUID id;
     private UUID userId;
-    private String title;
-    private String content;
-    private List<UUID> tagIds;
-    private Boolean isArchived;
+    private String name;
+    private String color;
 }
