@@ -3,6 +3,7 @@ package com.lgnasolutions.backend_challenge.application.services;
 import com.lgnasolutions.backend_challenge.domain.dto.NoteDTO;
 import com.lgnasolutions.backend_challenge.domain.dto.NoteSearchCriteriaDTO;
 import com.lgnasolutions.backend_challenge.domain.entities.Note;
+import com.lgnasolutions.backend_challenge.domain.entities.NoteState;
 import com.lgnasolutions.backend_challenge.domain.entities.NoteVersion;
 import com.lgnasolutions.backend_challenge.domain.exceptions.CustomException;
 import com.lgnasolutions.backend_challenge.domain.ports.NoteRepository;
@@ -96,24 +97,46 @@ public class NoteService {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 
-        // Save current state as a new version
-        NoteVersion prevVersion = NoteVersion.builder()
-                .noteId(note.getId())
-                .title(note.getCurrentState().getTitle())
-                .content(note.getCurrentState().getContent())
-                .versionNumber(note.getCurrentState().getVersionNumber())
-                .createdAt(note.getCurrentState().getCreatedAt())
-                .build();
+        NoteState currentState = note.getCurrentState();
+        NoteVersion prevVersion;
+        int newVersionNumber;
+        if (currentState == null) {
+            List<NoteVersion> existingVersions = noteVersionRepository.findByNoteId(note.getId());
+            int lastVersionNumber = existingVersions.stream()
+                .mapToInt(NoteVersion::getVersionNumber)
+                .max()
+                .orElse(0);
+            prevVersion = NoteVersion.builder()
+                    .noteId(note.getId())
+                    .title(note.getTitle())
+                    .content(note.getContent())
+                    .versionNumber(lastVersionNumber + 1)
+                    .createdAt(java.time.Instant.now())
+                    .build();
+            newVersionNumber = prevVersion.getVersionNumber() + 1;
+        } else {
+            prevVersion = NoteVersion.builder()
+                    .noteId(note.getId())
+                    .title(currentState.getTitle())
+                    .content(currentState.getContent())
+                    .versionNumber(currentState.getVersionNumber())
+                    .createdAt(currentState.getCreatedAt())
+                    .build();
+            newVersionNumber = prevVersion.getVersionNumber() + 1;
+        }
         noteVersionRepository.save(prevVersion);
 
+        // Actualiza el contenido y el título de la nota, asegurando que nunca sean null
+        note.setTitle(dto.getTitle() != null ? dto.getTitle() : note.getTitle());
+        note.setContent(dto.getContent() != null ? dto.getContent() : note.getContent());
+
         // Update note's current state
-        int newVersionNumber = prevVersion.getVersionNumber() + 1;
         NoteVersion newState = NoteVersion.builder()
                 .noteId(note.getId())
-                .title(dto.getTitle())
-                .content(dto.getContent())
+                .title(note.getTitle())
+                .content(note.getContent())
                 .versionNumber(newVersionNumber)
-                .createdAt(Instant.now())
+                .createdAt(java.time.Instant.now())
                 .build();
         note.setCurrentState(newState);
 
@@ -121,7 +144,7 @@ public class NoteService {
         List<NoteVersion> versions = noteVersionRepository.findByNoteId(note.getId());
         note.setVersions(versions);
 
-        noteRepository.create(note);
-        return dto;
+        Note updated = noteRepository.update(note);
+        return NoteMapper.toDTO(updated);
     }
 }

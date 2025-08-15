@@ -30,5 +30,7 @@ public class NoteEntity {
     private boolean archived=false;
     //TODO: Fix version number
 
-
+    @OneToMany
+    @JoinColumn(name = "note_id", referencedColumnName = "id")
+    private java.util.Set<NoteTagEntity> noteTags = new java.util.HashSet<>();
 }

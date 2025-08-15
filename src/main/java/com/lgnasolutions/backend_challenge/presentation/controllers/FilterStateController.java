@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,10 +24,10 @@ public class FilterStateController {
         return ResponseEntity.ok(savedDto);
         //TODO: Check error
     }
-    @GetMapping
-    public ResponseEntity<FilterStateDTO> getState(HttpServletRequest request) {
+    @GetMapping("/")
+    public ResponseEntity<List<FilterStateDTO>> getAll(HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
-        FilterStateDTO state = filterStateService.getState(userId);
-        return ResponseEntity.ok(state);
+        List<FilterStateDTO> states = filterStateService.getFiltersState(userId);
+        return ResponseEntity.ok(states);
     }
 }

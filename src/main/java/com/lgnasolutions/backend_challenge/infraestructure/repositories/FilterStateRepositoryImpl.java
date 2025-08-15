@@ -7,6 +7,7 @@ import com.lgnasolutions.backend_challenge.infraestructure.mappers.FilterStateMa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,7 +27,11 @@ public class FilterStateRepositoryImpl implements FilterStateRepository {
     }
 
     @Override
-    public Optional<FilterState> findByUserId(UUID userId) {
-        return filterStateJpaRepository.findByUserId(userId).map(FilterStateMapper::toDomain);
+    public List<FilterState> getAllFiltersStateByUserId(UUID userId) {
+        return filterStateJpaRepository.getFilterStateEntityListByUserId(userId)
+                .stream()
+                .map(FilterStateMapper::toDomain)
+                .toList();
+
     }
 }

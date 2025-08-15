@@ -26,11 +26,17 @@ public class NoteVersionService {
                 .collect(Collectors.toList());
     }
 
-    public void revertNoteVersion(UUID noteId, UUID versionId) {
+    public void revertNoteVersion(UUID versionId) {
         NoteVersion version = noteVersionRepository.findById(versionId);
-        Note note = noteRepository.findById(noteId)
+        if (version == null) {
+            throw new RuntimeException("NoteVersion not found");
+        }
+        Note note = noteRepository.findById(version.getNoteId())
                 .orElseThrow(() -> new RuntimeException("Note not found"));
+
+        note.setTitle(version.getTitle());
+        note.setContent(version.getContent());
         note.setCurrentState(version);
-        noteRepository.create(note);
+        noteRepository.update(note);
     }
 }

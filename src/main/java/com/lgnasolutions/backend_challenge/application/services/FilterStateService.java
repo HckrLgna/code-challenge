@@ -2,7 +2,6 @@ package com.lgnasolutions.backend_challenge.application.services;
 
 import com.lgnasolutions.backend_challenge.domain.dto.FilterStateDTO;
 import com.lgnasolutions.backend_challenge.domain.entities.FilterState;
-import com.lgnasolutions.backend_challenge.domain.exceptions.CustomException;
 import com.lgnasolutions.backend_challenge.domain.ports.FilterStateRepository;
 import com.lgnasolutions.backend_challenge.infraestructure.mappers.FilterStateMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +23,10 @@ public class FilterStateService {
         return FilterStateMapper.toDTO(saved);
     }
 
-    public FilterStateDTO getState(UUID userId) {
-        return filterStateRepository.findByUserId(userId)
+    public java.util.List<FilterStateDTO> getFiltersState(UUID userId) {
+        return filterStateRepository.getAllFiltersStateByUserId(userId)
+                .stream()
                 .map(FilterStateMapper::toDTO)
-                .orElseThrow( () -> new CustomException("Filter state not found for user: " + userId));
+                .collect(java.util.stream.Collectors.toList());
     }
 }

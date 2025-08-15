@@ -22,6 +22,9 @@ public class NoteSearchRepositoryImpl implements NoteSearchRepository {
 
     @Override
     public List<Note> searchNotes(NoteSearchCriteriaDTO criteria) {
+
+        System.out.println("Searching notes with criteria: " + criteria.getUserId()+ criteria.getTagIds() + " " + criteria.getTitle() + " " + criteria.getContent());
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<NoteEntity> cq = cb.createQuery(NoteEntity.class);
         Root<NoteEntity> note = cq.from(NoteEntity.class);
@@ -34,8 +37,11 @@ public class NoteSearchRepositoryImpl implements NoteSearchRepository {
     }
 
     private Predicate buildPredicate(CriteriaBuilder cb, Root<NoteEntity> note, NoteSearchCriteriaDTO criteria) {
-        Predicate predicate = cb.equal(note.get("userId"), criteria.getUserId());
+        Predicate predicate = cb.conjunction();
 
+        if (criteria.getUserId() != null) {
+            predicate = cb.and(predicate, cb.equal(note.get("userId"), criteria.getUserId()));
+        }
         if (isNotEmpty(criteria.getTitle())) {
             predicate = cb.and(predicate, cb.like(cb.lower(note.get("title")), "%" + criteria.getTitle().toLowerCase() + "%"));
         }
@@ -43,7 +49,7 @@ public class NoteSearchRepositoryImpl implements NoteSearchRepository {
             predicate = cb.and(predicate, cb.like(cb.lower(note.get("content")), "%" + criteria.getContent().toLowerCase() + "%"));
         }
         if (criteria.getTagIds() != null && !criteria.getTagIds().isEmpty()) {
-            Join<NoteEntity, NoteTagEntity> join = note.join("noteTag");
+            Join<NoteEntity, NoteTagEntity> join = note.join("noteTags");
             predicate = cb.and(predicate, join.get("tagId").in(criteria.getTagIds()));
         }
         return predicate;

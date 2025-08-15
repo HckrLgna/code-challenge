@@ -33,12 +33,12 @@ public class NoteMapper {
                 .build();
     }
     public static Note toDomain(NoteEntity entity){
-        return new Note(
-                entity.getId(),
-                entity.getUserId(),
-                entity.getTitle(),
-                entity.getContent(),
-                entity.isArchived()
-        );
+        return Note.builder()
+                .id(entity.getId())
+                .userId(entity.getUserId())
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .archived(entity.isArchived())
+                .build();
     }
 }
