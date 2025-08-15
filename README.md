@@ -9,7 +9,7 @@ This guide will help you set up and run the application, including database dock
 
 ## 1. Clone the Repository
 ```
-git clone <your-repo-url>
+git clone https://github.com/HckrLgna/code-challenge
 cd backend_challenge
 ```
 
