@@ -1,6 +1,7 @@
 # Backend Challenge - Getting Started
 
 This guide will help you set up and run the application, including database dockerization.
+APIS in postman https://www.postman.com/navigation-cosmologist-87035755/workspace/lgna-workspace/collection/22863250-b3f78ee6-50ae-4815-b616-afcab1ee623b?action=share&source=copy-link&creator=22863250
 
 ## Prerequisites
 - Java 17 or higher
